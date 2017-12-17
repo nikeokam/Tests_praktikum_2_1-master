@@ -1,0 +1,9 @@
+Narva
+59.3767 28.1921
+Current temperature: 
+272.761
+Forecast: 
+Day 1: 272.682
+Day 2: 272.65
+Day 3: 271.26
+Current: 272.68

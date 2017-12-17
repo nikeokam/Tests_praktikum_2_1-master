@@ -1,0 +1,9 @@
+Tokyo
+35.6828 139.759
+Current temperature: 
+0.0
+Forecast: 
+Day 1: 0.01
+Day 2: 4.82
+Day 3: 8.11
+Current: -1.59
