@@ -19,10 +19,9 @@ public class AddCityNames {
         this.urlRequest = urlRequest;
         this.reader = reader;
         this.writer = writer;
-        String fileData;
-        fileData = this.reader.readData();
+        cityList = this.reader.readData();
 
-
+        createRequests();
     }
     public void generateDataFiles() throws Exception {
         for(Request request : requests){

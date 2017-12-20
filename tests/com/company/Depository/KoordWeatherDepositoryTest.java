@@ -1,7 +1,9 @@
 package com.company.Depository;
 
 import com.company.Events.KoordWeatherEvent;
+import com.company.FileWrite;
 import com.company.Request;
+import com.company.UrlRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +17,7 @@ class KoordWeatherDepositoryTest {
 
     @BeforeEach
     void setupTests(){
-        request = new Request("Tallinn", "EE", "metric");
+        request = new Request("Tallinn", "metric", new FileWrite(), new UrlRequest());
         depository = new KoordWeatherDepository();
     }
 

@@ -1,32 +1,35 @@
 package com.company.Depository;
 
 import com.company.Events.CurrentWeatherEvent;
+import com.company.FileWrite;
 import com.company.Request;
+import com.company.UrlRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CurrentWeatherDepositoryTest {
-    @Test
-    void checkCurrentWeatherResponse() {
-        try{
-            Request request = new Request("Tallinn", "EE", "metric");
-            com.company.Depository.CurrentWeatherDepository  depository = new com.company.Depository.CurrentWeatherDepository();
+    private Request request;
+    private CurrentWeatherEvent event;
 
-            CurrentWeatherEvent event = depository.getCurrentWeather(request);
+    @BeforeEach
+    void setup() throws Exception {
+        request = new Request("Tallinn", "metric", new FileWrite(), new UrlRequest());
+        CurrentWeatherDepository  depository = new CurrentWeatherDepository();
 
-            assertEquals(request.getCity(),event.getCity());
-            asserztEquals(request.getCode(), event.getCode());
-            assertNotNull(event.getCurTemp());
-            assertNotNull(event.getMaxTemp());
-            assertNotNull(event.getMinTemp());
+        event = depository.getCurrentWeather(request);
 
-        } catch (Exception e) {
-            fail("Failure cause: " + e.getMessage());
-        }
     }
-    private void asserztEquals(String code, String code1){
 
+    @Test
+    void checkCurrentWeatherEventNotNull() {
+        assertNotNull(event);
+    }
+
+    @Test
+    void checkCurrentRequestCityName() {
+        assertNotNull(request.getCity());
     }
 
 }

@@ -1,9 +1,0 @@
-Tallinn
-59.4372 24.7454
-Current temperature: 
-274.15
-Forecast: 
-Day 1: 273.62
-Day 2: 273.05
-Day 3: 273.83
-Current: 273.62

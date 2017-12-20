@@ -9,8 +9,11 @@ import com.company.Events.PredictionsWeatherEvent;
 
 import java.awt.*;
 import java.net.URLConnection;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Request {
     protected Double currentTemp;
@@ -23,18 +26,6 @@ public class Request {
     public UrlRequest getUrlRequest() {
         return urlRequest;
     }
-
-    public Request(String city, String code) {
-        this.city = city;
-        this.code = code;
-    }
-
-    public Request(String city, String code, String units) {
-        this.city = city;
-        this.code = code;
-        this.units = units;
-    }
-
 
     public Request(String city, String units, FileWrite fileWrite, UrlRequest urlRequest) {
 
@@ -55,18 +46,46 @@ public class Request {
         return currentTemp;
     }
 
+    Double GetMinMaxToTest() {
+        return MinMaxToTest;
+    }
+
+    private Double MinMaxToTest;
+
+
     public boolean writeRequest() throws Exception {
-        PredictionsWeatherEvent predictions = new PredictionsWeatherDepository().getPredictions(this);
+            PredictionsWeatherEvent predictions = new PredictionsWeatherDepository().getPredictions(this);
+        HashMap<String, Double> forecastMaxTempMap = new HashMap<>();
+        HashMap<String, Double> forecastMinTempMap = new HashMap<>();
+        for (int i = 0; i < 40; i ++) {
+            Double fragmentTemp = predictions.getForecast().getJSONObject(i).getJSONObject("main").getDouble("temp");
+            String fragmentData = predictions.getForecast().getJSONObject(i).getString("dt_txt").substring(0, 10);
+            if (forecastMaxTempMap.containsKey(fragmentData) && forecastMaxTempMap.get(fragmentData) < fragmentTemp) {
+                forecastMaxTempMap.put(fragmentData, fragmentTemp);
+            } else if (forecastMinTempMap.containsKey(fragmentData) && forecastMinTempMap.get(fragmentData) > fragmentTemp) {
+                forecastMinTempMap.put(fragmentData, fragmentTemp);
+            } else {
+                forecastMaxTempMap.put(fragmentData, fragmentTemp);
+                forecastMinTempMap.put(fragmentData, fragmentTemp);
+            }
+
+        }
+
+        MinMaxToTest = forecastMaxTempMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().plusDays(1)));
+
         KoordWeatherEvent koordWeatherEvent = new KoordWeatherDepository().getKoordWeather(this);
         ArrayList<String> temperatureToWrite = new ArrayList<>(Arrays.asList(city, koordWeatherEvent.lattitude + " " + koordWeatherEvent.longitude,
                 "Current temperature: ",
                 Double.toString(getCurTemp()),
                 "Forecast: ",
-                "Day 1: " + predictions.getForecast().getJSONObject(0).getJSONObject("main").getDouble("temp_max"),
-                "Day 2: " + predictions.getForecast().getJSONObject(1).getJSONObject("main").getDouble("temp_max"),
-                "Day 3: " + predictions.getForecast().getJSONObject(2).getJSONObject("main").getDouble("temp_max"),
-                "Current: " + predictions.getForecast().getJSONObject(0).getJSONObject("main").getDouble("temp")));
-        return fileWrite.writeCurTemp(city, temperatureToWrite);
+                "Day 1: max " + forecastMaxTempMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now()))
+                        + " min "+ forecastMinTempMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now())),
+                "Day 2: max " + forecastMaxTempMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().plusDays(1)))
+                        + " min " + forecastMinTempMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().plusDays(1))),
+                "Day 3: max " + forecastMaxTempMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().plusDays(2)))
+                        + " min "+ forecastMinTempMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().plusDays(2)))));
+
+            return fileWrite.writeCurTemp(city, temperatureToWrite);
     }
 
     public String getCity() {

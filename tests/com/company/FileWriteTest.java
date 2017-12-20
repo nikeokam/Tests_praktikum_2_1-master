@@ -1,5 +1,7 @@
 package com.company;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -9,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class FileWriteTest {
+    @Test
     void MockTestFileWrite() throws Exception {
         FileWrite filesMock = mock(FileWrite.class);
 

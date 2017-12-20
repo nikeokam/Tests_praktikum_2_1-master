@@ -5,7 +5,7 @@ import com.company.Request;
 import com.company.Events.KoordWeatherEvent;
 
 
-public class KoordWeatherDepository extends Repository{
+public class KoordWeatherDepository{
 
     private final String KEY = "3dcbd390759a473460531c2fed5b634a";
 
